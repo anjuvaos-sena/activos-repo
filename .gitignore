@@ -1,0 +1,48 @@
+# ============================================
+# 🚀 Django + Render .gitignore
+# ============================================
+
+# --- Archivos y carpetas del entorno virtual ---
+# (Python genera estos al crear entornos locales)
+venv/
+env/
+.venv/
+
+# --- Archivos de caché y compilados ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Base de datos local (solo para desarrollo) ---
+# No debe subirse porque Render usará PostgreSQL
+*.sqlite3
+
+# --- Archivos sensibles ---
+# Guarda aquí tus variables de entorno (SECRET_KEY, DB URL, etc.)
+.env
+
+# --- Archivos estáticos recolectados ---
+# Django genera esta carpeta en producción con collectstatic
+/staticfiles/
+
+# --- Archivos de logs o depuración ---
+*.log
+
+# --- Archivos temporales del sistema operativo ---
+.DS_Store
+Thumbs.db
+
+# --- Configuración de IDEs o editores ---
+.vscode/
+.idea/
+
+# --- Archivos de pruebas o cobertura ---
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# --- Archivos generados por herramientas de empaquetado ---
+build/
+dist/
+*.egg-info/

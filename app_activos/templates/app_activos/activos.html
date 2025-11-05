@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Activos de Red - {{ empresa }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-activo {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactivo {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .table th {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .table td {
+            vertical-align: middle;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .search-box {
+            max-width: 300px;
+        }
+        
+        .action-btn {
+            padding: 4px 8px;
+            margin: 0 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-network-wired me-2"></i>
+                Control de Activos de Red
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text text-light">
+                    <i class="fas fa-user-circle me-1"></i>
+                    Administrador
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="text-dark">
+                        <i class="fas fa-server me-2"></i>
+                        Inventario de Activos
+                    </h2>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        Nuevo Activo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-12">
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ activos|length }}</h4>
+                                <p class="mb-0">Total Activos</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-server fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="card">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Lista de Activos</h5>
+                    <div class="d-flex">
+                        <div class="input-group search-box">
+                            <input type="text" class="form-control" placeholder="Buscar..." id="searchInput">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="activosTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Marca</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for activo in activos %}
+                            <tr>
+                                <td><strong>#{{ activo.id }}</strong></td>
+                                <td><code>{{ activo.codigo }}</code></td>
+                                <td>{{ activo.nombre }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ activo.marca }}</span>
+                                </td>
+                                <td>
+                                    {% if activo.estado == 'activo' %}
+                                        <span class="status-badge status-activo">
+                                            <i class="fas fa-circle me-1"></i>
+                                            Activo
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-inactivo">
+                                            <i class="fas fa-circle me-1"></i>
+                                            Inactivo
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary action-btn" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info action-btn" title="Ver Detalles">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        {% if activo.estado == 'activo' %}
+                                            <button class="btn btn-sm btn-outline-warning action-btn desactivar-btn" 
+                                                    data-id="{{ activo.id }}" title="Desactivar">
+                                                <i class="fas fa-pause"></i>
+                                            </button>
+                                        {% else %}
+                                            <button class="btn btn-sm btn-outline-success action-btn activar-btn" 
+                                                    data-id="{{ activo.id }}" title="Activar">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                        {% endif %}
+                                        <button class="btn btn-sm btn-outline-danger action-btn" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No se encontraron activos registrados</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-3 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2024 Control de Activos de Red. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">Sistema de Gestión de Infraestructura</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Inicializar DataTable
+            $('#activosTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
+                },
+                pageLength: 10,
+                responsive: true
+            });
+
+            // Función para cambiar estado del activo
+            $('.activar-btn, .desactivar-btn').click(function() {
+                const activoId = $(this).data('id');
+                const accion = $(this).hasClass('activar-btn') ? 'activar' : 'desactivar';
+                const confirmacion = accion === 'activar' ? 
+                    '¿Está seguro de que desea activar este activo?' : 
+                    '¿Está seguro de que desea desactivar este activo?';
+                
+                if (confirm(confirmacion)) {
+                    // Aquí iría la llamada AJAX para cambiar el estado
+                    console.log(`${accion.toUpperCase()} activo ID: ${activoId}`);
+                    
+                    // Simular cambio de estado (en producción esto sería una llamada AJAX)
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
+            });
+
+            // Buscador personalizado
+            $('#searchInput').on('keyup', function() {
+                const value = $(this).val().toLowerCase();
+                $('#activosTable tbody tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
